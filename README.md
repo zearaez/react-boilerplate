@@ -11,6 +11,8 @@ A modern and scalable React application boilerplate to kickstart your next web p
 - Testing framework
 - Code quality tools (ESLint, Prettier)
 - Build and bundling tools
+- Pre-commit hooks via Husky
+- GitHub Actions CI/CD pipeline
 
 ## Getting Started
 
@@ -23,7 +25,7 @@ A modern and scalable React application boilerplate to kickstart your next web p
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/react-boilerplate.git
+git clone https://github.com/zearaez/react-boilerplate.git
 
 # Navigate to the project directory
 cd react-boilerplate
@@ -59,12 +61,37 @@ yarn build
 npm test
 # or
 yarn test
+
+# Run tests in watch mode
+npm run test:watch
+# or
+yarn test:watch
+
+# Run test coverage report
+npm run test:coverage
+# or
+yarn test:coverage
+```
+
+### Linting and formatting
+
+```bash
+# Run linting
+npm run lint
+# or
+yarn lint
+
+# Format code
+npm run format
+# or
+yarn format
 ```
 
 ## Project Structure
 
 ```
 react-boilerplate/
+├── .github/           # GitHub specific files (workflows, issue templates)
 ├── public/            # Static assets
 ├── src/               # Application source code
 │   ├── components/    # Reusable components
@@ -77,6 +104,7 @@ react-boilerplate/
 │   └── index.tsx      # Application entry point
 ├── tests/             # Test files
 ├── .eslintrc.json     # ESLint configuration
+├── .husky/            # Husky git hooks
 ├── .prettierrc        # Prettier configuration
 ├── tsconfig.json      # TypeScript configuration
 └── package.json       # Project dependencies and scripts
