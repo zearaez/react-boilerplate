@@ -1,0 +1,31 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: "Create .env file"
+        run: |
+          touch .env
+          echo VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }} >> .env
+          cat .env
+
+      - name: Build project
+        run: yarn build
