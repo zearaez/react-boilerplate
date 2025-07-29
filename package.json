@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",
+    "@sentry/react": "^9.42.1",
+    "@sentry/tracing": "^7.120.3",
     "@tanstack/react-query": "^5.74.4",
     "@tanstack/react-query-devtools": "^5.83.0",
     "axios": "^1.8.3",

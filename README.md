@@ -350,6 +350,9 @@ VITE_ENABLE_PREFETCHING=true          # Controls all prefetching behavior
 VITE_ENABLE_OPTIMISTIC_UPDATES=true  # Controls optimistic updates
 VITE_ENABLE_QUERY_DEVTOOLS=true      # React Query DevTools in development
 VITE_ENABLE_ERROR_LOGGING=true       # Controls error logging in console
+
+# Error Tracking (Optional)
+VITE_SENTRY_DSN=your_sentry_dsn_here # Sentry error tracking
 ```
 
 #### **🎛️ Feature Flags Explained**
@@ -368,6 +371,16 @@ VITE_ENABLE_ERROR_LOGGING=true       # Controls error logging in console
 **VITE_ENABLE_QUERY_DEVTOOLS** - Shows React Query DevTools:
 - Development debugging panel
 - Only visible when enabled
+
+**VITE_ENABLE_ERROR_LOGGING** - Controls console error output:
+- Error boundary logging
+- Set to `false` for cleaner console during development
+
+**VITE_SENTRY_DSN** - Enables Sentry error tracking:
+- Automatic error capture and reporting
+- Performance monitoring
+- User session tracking
+- See `SENTRY_INTEGRATION.md` for setup guide
 - Automatically hidden in production
 
 **VITE_ENABLE_ERROR_LOGGING** - Controls console error output:

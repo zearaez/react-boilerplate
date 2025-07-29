@@ -10,6 +10,10 @@ import init from "@/init";
 import GlobalErrorBoundary from "./components/error/GlobalErrorBoundary";
 import QueryErrorBoundary from "./components/error/QueryErrorBoundary";
 import "./components/error/error-styles.css";
+import { initSentry } from "@/core/sentry/sentry";
+
+// Initialize Sentry for error tracking
+initSentry();
 
 // Set document title from environment variable
 document.title = import.meta.env.VITE_APP_NAME || "React App";

@@ -1,4 +1,5 @@
 import React, { Component, ReactNode } from "react";
+import { captureException } from "@/core/sentry/sentry";
 
 interface Props {
   children: ReactNode;
@@ -32,13 +33,15 @@ class GlobalErrorBoundary extends Component<Props, State> {
       console.error("Global Error Boundary caught an error:", error, errorInfo);
     }
 
+    // Send error to Sentry if configured
+    captureException(error, {
+      component: "GlobalErrorBoundary",
+      hasComponentStack: !!errorInfo.componentStack,
+      errorBoundary: true,
+    });
+
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
-
-    // You can also send error to analytics service here
-    // if (import.meta.env.VITE_ENABLE_ERROR_LOGGING === 'true') {
-    //   analytics.captureException(error, { extra: errorInfo });
-    // }
   }
 
   override render() {
