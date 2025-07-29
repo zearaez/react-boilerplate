@@ -40,13 +40,40 @@ export const useApi = (options: UseApiOptions) => {
     });
   };
 
-  // Mutation hooks
+  // Mutation hooks with optimistic updates
   const useCreate = <T = unknown>() => {
     return useMutation({
       mutationFn: (data: unknown) =>
         apiService.create<T>(data).then((res) => res.data),
-      onSuccess: () => {
-        // Invalidate list queries
+      onMutate: async (newItem: unknown) => {
+        // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+        await queryClient.cancelQueries({ queryKey: [resource, "list"] });
+
+        // Snapshot the previous value
+        const previousItems = queryClient.getQueryData([resource, "list"]);
+
+        // Optimistically update to the new value
+        queryClient.setQueryData([resource, "list"], (old: T[] | undefined) => {
+          if (!old) return [newItem as T];
+          const tempId = `temp-${Date.now()}`;
+          const newItemWithId =
+            typeof newItem === "object" && newItem !== null
+              ? ({ ...(newItem as Record<string, unknown>), id: tempId } as T)
+              : (newItem as T);
+          return [...old, newItemWithId];
+        });
+
+        // Return a context object with the snapshotted value
+        return { previousItems };
+      },
+      onError: (_err, _newItem, context) => {
+        // If the mutation fails, use the context returned from onMutate to roll back
+        if (context?.previousItems) {
+          queryClient.setQueryData([resource, "list"], context.previousItems);
+        }
+      },
+      onSettled: () => {
+        // Always refetch after error or success to sync with server state
         queryClient.invalidateQueries({ queryKey: [resource, "list"] });
       },
     });
@@ -71,12 +98,64 @@ export const useApi = (options: UseApiOptions) => {
     return useMutation({
       mutationFn: ({ id, data }: { id: string; data: unknown }) =>
         apiService.update<T>(id, data).then((res) => res.data),
-      onSuccess: (_, variables) => {
-        // Invalidate both list and detail queries
-        queryClient.invalidateQueries({ queryKey: [resource, "list"] });
-        queryClient.invalidateQueries({
-          queryKey: [resource, "detail", variables.id],
+      onMutate: async ({ id, data }) => {
+        // Cancel queries for both list and detail
+        await queryClient.cancelQueries({ queryKey: [resource, "list"] });
+        await queryClient.cancelQueries({ queryKey: [resource, "detail", id] });
+
+        // Snapshot previous values
+        const previousList = queryClient.getQueryData([resource, "list"]);
+        const previousItem = queryClient.getQueryData([resource, "detail", id]);
+
+        // Optimistically update list
+        queryClient.setQueryData([resource, "list"], (old: T[] | undefined) => {
+          if (!old) return old;
+          return old.map((item: T) => {
+            const itemId = (item as Record<string, unknown>)?.id;
+            if (itemId === id) {
+              return typeof data === "object" && data !== null
+                ? ({
+                    ...(item as Record<string, unknown>),
+                    ...(data as Record<string, unknown>),
+                  } as T)
+                : (data as T);
+            }
+            return item;
+          });
         });
+
+        // Optimistically update detail
+        queryClient.setQueryData(
+          [resource, "detail", id],
+          (old: T | undefined) => {
+            if (!old) return old;
+            return typeof data === "object" && data !== null
+              ? ({
+                  ...(old as Record<string, unknown>),
+                  ...(data as Record<string, unknown>),
+                } as T)
+              : (data as T);
+          },
+        );
+
+        return { previousList, previousItem, id };
+      },
+      onError: (_err, { id }, context) => {
+        // Rollback on error
+        if (context?.previousList) {
+          queryClient.setQueryData([resource, "list"], context.previousList);
+        }
+        if (context?.previousItem) {
+          queryClient.setQueryData(
+            [resource, "detail", id],
+            context.previousItem,
+          );
+        }
+      },
+      onSettled: (_, __, { id }) => {
+        // Refetch to sync with server
+        queryClient.invalidateQueries({ queryKey: [resource, "list"] });
+        queryClient.invalidateQueries({ queryKey: [resource, "detail", id] });
       },
     });
   };
@@ -146,8 +225,46 @@ export const useApi = (options: UseApiOptions) => {
   const useDelete = () => {
     return useMutation({
       mutationFn: (id: string) => apiService.remove(id),
-      onSuccess: (_, id) => {
-        // Invalidate list queries and remove detail query
+      onMutate: async (id: string) => {
+        // Cancel any outgoing refetches
+        await queryClient.cancelQueries({ queryKey: [resource, "list"] });
+        await queryClient.cancelQueries({ queryKey: [resource, "detail", id] });
+
+        // Snapshot the previous values
+        const previousList = queryClient.getQueryData([resource, "list"]);
+        const previousItem = queryClient.getQueryData([resource, "detail", id]);
+
+        // Optimistically remove from list
+        queryClient.setQueryData(
+          [resource, "list"],
+          (old: unknown[] | undefined) => {
+            if (!old) return old;
+            return old.filter((item: unknown) => {
+              const itemId = (item as Record<string, unknown>)?.id;
+              return itemId !== id;
+            });
+          },
+        );
+
+        // Remove detail query immediately
+        queryClient.removeQueries({ queryKey: [resource, "detail", id] });
+
+        return { previousList, previousItem, id };
+      },
+      onError: (_err, id, context) => {
+        // Rollback on error
+        if (context?.previousList) {
+          queryClient.setQueryData([resource, "list"], context.previousList);
+        }
+        if (context?.previousItem) {
+          queryClient.setQueryData(
+            [resource, "detail", id],
+            context.previousItem,
+          );
+        }
+      },
+      onSettled: (_, __, id) => {
+        // Always refetch to sync with server
         queryClient.invalidateQueries({ queryKey: [resource, "list"] });
         queryClient.removeQueries({ queryKey: [resource, "detail", id] });
       },

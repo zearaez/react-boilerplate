@@ -1,0 +1,156 @@
+/* Error Boundary Styles */
+.error-boundary {
+  padding: 2rem;
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+}
+
+.error-boundary-content {
+  max-width: 600px;
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-boundary-content h1 {
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+.error-boundary-content p {
+  color: #6c757d;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.error-details {
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.error-details summary {
+  cursor: pointer;
+  color: #007bff;
+  margin-bottom: 0.5rem;
+}
+
+.error-details pre {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  color: #495057;
+}
+
+/* Query Error Boundary */
+.query-error-boundary {
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.error-content {
+  text-align: center;
+  max-width: 500px;
+}
+
+.error-content h2 {
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+.error-content p {
+  color: #6c757d;
+  margin-bottom: 2rem;
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+/* Error Display Component */
+.error-display {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  margin: 1rem 0;
+}
+
+.error-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.error-content h4 {
+  color: #721c24;
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+
+.error-content p {
+  color: #721c24;
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+}
+
+/* Retry Buttons */
+.retry-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+  background-color: #0056b3;
+}
+
+.retry-button.secondary {
+  background-color: #6c757d;
+}
+
+.retry-button.secondary:hover {
+  background-color: #545b62;
+}
+
+.retry-button.primary {
+  background-color: #28a745;
+}
+
+.retry-button.primary:hover {
+  background-color: #1e7e34;
+}
+
+/* Small error display variant */
+.error-display.small {
+  padding: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.error-display.small .error-icon {
+  font-size: 1.25rem;
+}
+
+.error-display.small .retry-button {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+}

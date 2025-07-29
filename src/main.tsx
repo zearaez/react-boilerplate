@@ -1,14 +1,16 @@
-import { StrictMode } from 'react';
-import ReactDOM from 'react-dom/client';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import App from '@/App';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { persistor, store } from '@/store/store';
-import init from '@/init';
-import ErrorBoundary from './components/error/ErrorBoundary';
+import { StrictMode } from "react";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import App from "@/App";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { persistor, store } from "@/store/store";
+import init from "@/init";
+import GlobalErrorBoundary from "./components/error/GlobalErrorBoundary";
+import QueryErrorBoundary from "./components/error/QueryErrorBoundary";
+import "./components/error/error-styles.css";
 
-// Initialize React Query client
+// Initialize React Query client with enhanced prefetching configuration
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -17,24 +19,35 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5, // 5 minutes
       refetchOnReconnect: true,
       retryDelay: 1000,
+      // Enhanced prefetching options
+      refetchOnMount: "always",
+      gcTime: 1000 * 60 * 30, // 30 minutes garbage collection
     },
     mutations: {
       retry: false,
+      // Improved error handling for mutations
+      onError: (error) => {
+        // eslint-disable-next-line no-console
+        console.error("Mutation error:", error);
+        // You can add global mutation error handling here
+      },
     },
   },
 });
 init();
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ErrorBoundary>
-        <Provider store={store}>
-          <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
-            <QueryClientProvider client={queryClient}>
+    <GlobalErrorBoundary>
+      <Provider store={store}>
+        <PersistGate loading={<div>Loading...</div>} persistor={persistor}>
+          <QueryClientProvider client={queryClient}>
+            <QueryErrorBoundary>
               <App />
-            </QueryClientProvider>
-          </PersistGate>
-        </Provider>
-      </ErrorBoundary>
-  </StrictMode>
+            </QueryErrorBoundary>
+          </QueryClientProvider>
+        </PersistGate>
+      </Provider>
+    </GlobalErrorBoundary>
+  </StrictMode>,
 );
