@@ -487,7 +487,7 @@ yarn tsc --noEmit
 - [Redux Toolkit Docs](https://redux-toolkit.js.org/)
 
 ### **Example Components**
-- `src/components/examples/EnhancedUsersList.tsx` - Complete CRUD example
+- `src/examples/EnhancedUsersList.tsx` - Complete CRUD example
 - `src/components/PrefetchLink.tsx` - Hover prefetching example
 - `src/components/error/` - Error handling examples
 

@@ -4,6 +4,7 @@ import { usePrefetch } from "@/hooks/usePrefetch";
 import { useInfiniteScrollPrefetch } from "@/hooks/useInfiniteScrollPrefetch";
 import { ErrorDisplay } from "@/components/error";
 import PrefetchLink from "@/components/PrefetchLink";
+import "./enhanced-users-list.css";
 
 /**
  * Example component demonstrating optimistic updates, error handling, and prefetching
