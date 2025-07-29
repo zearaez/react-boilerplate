@@ -24,6 +24,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",
     "@tanstack/react-query": "^5.74.4",
+    "@tanstack/react-query-devtools": "^5.83.0",
     "axios": "^1.8.3",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",

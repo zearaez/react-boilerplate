@@ -15,6 +15,8 @@ export const useApi = (options: UseApiOptions) => {
   const { resource } = options;
   const apiService = createApiService({ baseUrl: resource });
   const queryClient = useQueryClient();
+  const isOptimisticUpdatesEnabled =
+    import.meta.env.VITE_ENABLE_OPTIMISTIC_UPDATES === "true";
 
   // Query hooks
   const useList = <T = unknown>(
@@ -46,6 +48,11 @@ export const useApi = (options: UseApiOptions) => {
       mutationFn: (data: unknown) =>
         apiService.create<T>(data).then((res) => res.data),
       onMutate: async (newItem: unknown) => {
+        // Skip optimistic updates if disabled
+        if (!isOptimisticUpdatesEnabled) {
+          return;
+        }
+
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
         await queryClient.cancelQueries({ queryKey: [resource, "list"] });
 
@@ -68,7 +75,7 @@ export const useApi = (options: UseApiOptions) => {
       },
       onError: (_err, _newItem, context) => {
         // If the mutation fails, use the context returned from onMutate to roll back
-        if (context?.previousItems) {
+        if (context?.previousItems && isOptimisticUpdatesEnabled) {
           queryClient.setQueryData([resource, "list"], context.previousItems);
         }
       },
@@ -99,6 +106,11 @@ export const useApi = (options: UseApiOptions) => {
       mutationFn: ({ id, data }: { id: string; data: unknown }) =>
         apiService.update<T>(id, data).then((res) => res.data),
       onMutate: async ({ id, data }) => {
+        // Skip optimistic updates if disabled
+        if (!isOptimisticUpdatesEnabled) {
+          return;
+        }
+
         // Cancel queries for both list and detail
         await queryClient.cancelQueries({ queryKey: [resource, "list"] });
         await queryClient.cancelQueries({ queryKey: [resource, "detail", id] });
@@ -141,15 +153,17 @@ export const useApi = (options: UseApiOptions) => {
         return { previousList, previousItem, id };
       },
       onError: (_err, { id }, context) => {
-        // Rollback on error
-        if (context?.previousList) {
-          queryClient.setQueryData([resource, "list"], context.previousList);
-        }
-        if (context?.previousItem) {
-          queryClient.setQueryData(
-            [resource, "detail", id],
-            context.previousItem,
-          );
+        // Rollback on error if optimistic updates were enabled
+        if (context && isOptimisticUpdatesEnabled) {
+          if (context?.previousList) {
+            queryClient.setQueryData([resource, "list"], context.previousList);
+          }
+          if (context?.previousItem) {
+            queryClient.setQueryData(
+              [resource, "detail", id],
+              context.previousItem,
+            );
+          }
         }
       },
       onSettled: (_, __, { id }) => {
@@ -226,6 +240,11 @@ export const useApi = (options: UseApiOptions) => {
     return useMutation({
       mutationFn: (id: string) => apiService.remove(id),
       onMutate: async (id: string) => {
+        // Skip optimistic updates if disabled
+        if (!isOptimisticUpdatesEnabled) {
+          return;
+        }
+
         // Cancel any outgoing refetches
         await queryClient.cancelQueries({ queryKey: [resource, "list"] });
         await queryClient.cancelQueries({ queryKey: [resource, "detail", id] });
@@ -252,15 +271,17 @@ export const useApi = (options: UseApiOptions) => {
         return { previousList, previousItem, id };
       },
       onError: (_err, id, context) => {
-        // Rollback on error
-        if (context?.previousList) {
-          queryClient.setQueryData([resource, "list"], context.previousList);
-        }
-        if (context?.previousItem) {
-          queryClient.setQueryData(
-            [resource, "detail", id],
-            context.previousItem,
-          );
+        // Rollback on error if optimistic updates were enabled
+        if (context && isOptimisticUpdatesEnabled) {
+          if (context?.previousList) {
+            queryClient.setQueryData([resource, "list"], context.previousList);
+          }
+          if (context?.previousItem) {
+            queryClient.setQueryData(
+              [resource, "detail", id],
+              context.previousItem,
+            );
+          }
         }
       },
       onSettled: (_, __, id) => {

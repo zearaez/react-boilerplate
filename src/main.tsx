@@ -4,11 +4,15 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import App from "@/App";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { persistor, store } from "@/store/store";
 import init from "@/init";
 import GlobalErrorBoundary from "./components/error/GlobalErrorBoundary";
 import QueryErrorBoundary from "./components/error/QueryErrorBoundary";
 import "./components/error/error-styles.css";
+
+// Set document title from environment variable
+document.title = import.meta.env.VITE_APP_NAME || "React App";
 
 // Initialize React Query client with enhanced prefetching configuration
 const queryClient = new QueryClient({
@@ -45,6 +49,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             <QueryErrorBoundary>
               <App />
             </QueryErrorBoundary>
+            {import.meta.env.VITE_ENABLE_QUERY_DEVTOOLS === "true" && (
+              <ReactQueryDevtools initialIsOpen={false} />
+            )}
           </QueryClientProvider>
         </PersistGate>
       </Provider>

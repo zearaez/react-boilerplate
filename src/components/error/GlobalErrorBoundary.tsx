@@ -26,15 +26,19 @@ class GlobalErrorBoundary extends Component<Props, State> {
   }
 
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log error to console or error reporting service
-    // eslint-disable-next-line no-console
-    console.error("Global Error Boundary caught an error:", error, errorInfo);
+    // Log error to console or error reporting service only if enabled
+    if (import.meta.env.VITE_ENABLE_ERROR_LOGGING === "true") {
+      // eslint-disable-next-line no-console
+      console.error("Global Error Boundary caught an error:", error, errorInfo);
+    }
 
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
 
     // You can also send error to analytics service here
-    // analytics.captureException(error, { extra: errorInfo });
+    // if (import.meta.env.VITE_ENABLE_ERROR_LOGGING === 'true') {
+    //   analytics.captureException(error, { extra: errorInfo });
+    // }
   }
 
   override render() {

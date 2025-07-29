@@ -7,9 +7,6 @@ interface ImportMetaEnv {
   readonly VITE_ENABLE_PREFETCHING: string;
   readonly VITE_ENABLE_QUERY_DEVTOOLS: string;
   readonly VITE_ENABLE_ERROR_LOGGING: string;
-  readonly VITE_ENABLE_PERFORMANCE_MONITORING: string;
-  readonly VITE_BUILD_TARGET: string;
-  readonly VITE_ENABLE_SOURCE_MAPS: string;
   readonly VITE_GA_TRACKING_ID?: string;
   readonly VITE_SENTRY_DSN?: string;
   readonly VITE_GOOGLE_CLIENT_ID?: string;

@@ -349,31 +349,37 @@ VITE_APP_NAME=React Boilerplate
 VITE_ENABLE_PREFETCHING=true          # Controls all prefetching behavior
 VITE_ENABLE_OPTIMISTIC_UPDATES=true  # Controls optimistic updates
 VITE_ENABLE_QUERY_DEVTOOLS=true      # React Query DevTools in development
+VITE_ENABLE_ERROR_LOGGING=true       # Controls error logging in console
 ```
 
-#### **🎛️ Feature Flag: VITE_ENABLE_PREFETCHING**
+#### **🎛️ Feature Flags Explained**
 
-The prefetching feature flag provides complete control over all prefetching strategies:
-
-**When `VITE_ENABLE_PREFETCHING=true` (default):**
+**VITE_ENABLE_PREFETCHING** - Controls all prefetching strategies:
 - Route-based prefetching active
-- Hover prefetching in `PrefetchLink` components
+- Hover prefetching in `PrefetchLink` components  
 - Infinite scroll prefetching enabled
-- Better perceived performance
+- Set to `false` for cleaner debugging
 
-**When `VITE_ENABLE_PREFETCHING=false`:**
-- All prefetching disabled
-- Cleaner network activity for debugging
-- Lower memory usage
-- Standard loading experience
+**VITE_ENABLE_OPTIMISTIC_UPDATES** - Controls mutation behavior:
+- Instant UI updates before server response
+- Automatic rollback on errors
+- Set to `false` to wait for server confirmation
 
-**Testing the Feature Flag:**
+**VITE_ENABLE_QUERY_DEVTOOLS** - Shows React Query DevTools:
+- Development debugging panel
+- Only visible when enabled
+- Automatically hidden in production
+
+**VITE_ENABLE_ERROR_LOGGING** - Controls console error output:
+- Error boundary logging
+- Set to `false` for cleaner console during development
+
+**Testing Feature Flags:**
 ```bash
-# Disable prefetching for testing
+# Test with all optimizations disabled
 echo "VITE_ENABLE_PREFETCHING=false" >> .env.local
+echo "VITE_ENABLE_OPTIMISTIC_UPDATES=false" >> .env.local
 yarn dev
-
-# Monitor in DevTools Network tab - no prefetch requests should appear
 ```
 
 ### **TypeScript Configuration**
