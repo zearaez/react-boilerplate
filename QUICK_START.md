@@ -15,7 +15,7 @@ yarn --version
 ### 2. **Project Setup**
 ```bash
 # Clone and setup
-git clone <your-repo-url>
+git clone https://github.com/zearaez/react-boilerplate
 cd react-boilerplate
 yarn install
 
