@@ -1,6 +1,6 @@
-import { useAppDispatch } from '@/store/hooks/hooks';
-import { clearToken } from '@/store/slice/authSlice';
-import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from "@/store/hooks/hooks";
+import { clearToken } from "@/store/slice/auth.slice";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -8,7 +8,7 @@ const Home = () => {
 
   const handleLogout = () => {
     dispatch(clearToken());
-    navigate('/login');
+    navigate("/login");
   };
   return (
     <>

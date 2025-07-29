@@ -1,6 +1,6 @@
-import { setAuthTokens } from "./slice/authSlice";
+import { setAuthTokens } from "./slice/auth.slice";
 import { store } from "@/store/store";
-import { setToken, clearToken } from "@/store/slice/authSlice";
+import { setToken, clearToken } from "@/store/slice/auth.slice";
 import { User } from "@/types";
 
 export const getToken = () => store.getState().auth.token;

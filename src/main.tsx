@@ -12,8 +12,11 @@ import QueryErrorBoundary from "./components/error/QueryErrorBoundary";
 import "./components/error/error-styles.css";
 import { initSentry } from "@/core/sentry/sentry";
 
-// Initialize Sentry for error tracking
-initSentry();
+// Initialize Sentry for error tracking (async)
+initSentry().catch((error) => {
+  // eslint-disable-next-line no-console
+  console.error("Failed to initialize Sentry:", error);
+});
 
 // Set document title from environment variable
 document.title = import.meta.env.VITE_APP_NAME || "React App";

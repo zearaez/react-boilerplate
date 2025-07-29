@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ILogin } from "@/types/login";
 import { authService } from "@/core/api/auth-service";
 import { useAppDispatch } from "@/store/hooks/hooks";
-import { setAuthTokens, clearToken } from "@/store/slice/authSlice";
+import { setAuthTokens, clearToken } from "@/store/slice/auth.slice";
 import { useNavigate } from "react-router-dom";
 
 /**
