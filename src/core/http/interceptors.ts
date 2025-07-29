@@ -1,18 +1,18 @@
-import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 // import { refreshUser } from '@/core/api/auth';
-import http from '@/core/http/http';
-import { AUTH_REFRESH_TOKEN } from '@/core/http/endpoint-urls';
+import http from "@/core/http/http";
+import { AUTH_REFRESH_TOKEN } from "@/core/http/endpoint-urls";
 import {
   dispatchClearToken,
   dispatchSetAuthTokens,
   dispatchSetToken,
   getRefreshToken,
   getToken,
-} from '@/store/manager';
-import AuthResource from '../api/auth';
+} from "@/store/manager";
+import { authService } from "../api/auth-service";
 
 const RETRY_COUNT_LIMIT = 3;
-const AUTHORIZATION_HEADER = 'Authorization';
+const AUTHORIZATION_HEADER = "Authorization";
 
 function buildAuthHeader(accessToken: string) {
   return `Bearer ${accessToken}`;
@@ -25,8 +25,10 @@ const requestInterceptor = (request: InternalAxiosRequestConfig) => {
     request.headers[AUTHORIZATION_HEADER] = buildAuthHeader(token);
   }
 
-  document.getElementById('spinner-container')?.classList.add('spinner-container');
-  document.getElementById('spinner')?.classList.add('timer-loader');
+  document
+    .getElementById("spinner-container")
+    ?.classList.add("spinner-container");
+  document.getElementById("spinner")?.classList.add("timer-loader");
   return request;
 };
 
@@ -50,14 +52,17 @@ const responseInterceptor = (response: AxiosResponse) => {
     }
   }
 
-  document.getElementById('spinner-container')?.classList.remove('spinner-container');
-  document.getElementById('spinner')?.classList.remove('timer-loader');
+  document
+    .getElementById("spinner-container")
+    ?.classList.remove("spinner-container");
+  document.getElementById("spinner")?.classList.remove("timer-loader");
 
   return response;
 };
 
-const errorInterceptor = async (error: AxiosError<{ error: { message: string } }>) => {
-  const auth = new AuthResource();
+const errorInterceptor = async (
+  error: AxiosError<{ error: { message: string } }>,
+) => {
   if (!error.response) {
     return Promise.reject(error);
   }
@@ -68,10 +73,13 @@ const errorInterceptor = async (error: AxiosError<{ error: { message: string } }
     retryCount: number;
   };
 
-  if (originalRequest.url === AUTH_REFRESH_TOKEN && error.response.status === 401) {
+  if (
+    originalRequest.url === AUTH_REFRESH_TOKEN &&
+    error.response.status === 401
+  ) {
     // if refresh token is expired
     dispatchClearToken();
-    window.location.href = '/login';
+    window.location.href = "/login";
   }
 
   if (error.response.status === 401 && !originalRequest.__isRetryRequest) {
@@ -82,35 +90,39 @@ const errorInterceptor = async (error: AxiosError<{ error: { message: string } }
 
     if (!refreshToken) {
       dispatchClearToken();
-      window.location.href = '/login';
+      window.location.href = "/login";
       return Promise.reject(error);
     }
 
     try {
-      const { data } = await auth.refreshUser(refreshToken);
+      const { data } = await authService.refreshToken(refreshToken);
       dispatchSetAuthTokens({
         token: data.access,
         refreshToken: data.refresh || refreshToken, // Update refresh token if provided
         user: data.user,
       });
 
-      originalRequest.headers[AUTHORIZATION_HEADER] = buildAuthHeader(data.access);
+      originalRequest.headers[AUTHORIZATION_HEADER] = buildAuthHeader(
+        data.access,
+      );
       return http.request(originalRequest);
     } catch (refreshError) {
       // If refresh fails, log out the user
       dispatchClearToken();
-      window.location.href = '/login';
+      window.location.href = "/login";
       return Promise.reject(refreshError);
     }
   }
 
   if (originalRequest.retryCount > RETRY_COUNT_LIMIT) {
     dispatchClearToken();
-    window.location.href = '/login';
+    window.location.href = "/login";
   }
 
-  document.getElementById('spinner-container')?.classList.remove('spinner-container');
-  document.getElementById('spinner')?.classList.remove('timer-loader');
+  document
+    .getElementById("spinner-container")
+    ?.classList.remove("spinner-container");
+  document.getElementById("spinner")?.classList.remove("timer-loader");
   return Promise.reject(error);
 };
 

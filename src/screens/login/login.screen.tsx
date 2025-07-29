@@ -1,34 +1,61 @@
-import { useAppDispatch } from "@/store/hooks/hooks";
-import { setAuthTokens } from "@/store/slice/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useLogin } from "@/hooks/useAuth";
+import { ILogin } from "@/types/login";
 
 const LoginPage = () => {
-  // const user = useSelector((state: SelectorTypes) => state.user);
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const handleLogin = () => {
-    // Simulate a login action
-    dispatch(
-      setAuthTokens({
-        token: 'my-access-token',
-        refreshToken: 'my-refresh-token',
-        user: {
-          id: '12345',
-          first_name: 'John',
-          last_name: 'Doe',
-          email: 'john.doe@email.com',
-          phone: '123-456-7890',
-          created_at: '2023-10-01T12:00:00Z',
-          updated_at: '2023-10-01T12:00:00Z',
-        },
-      })
-    );
-    navigate('/dashboard');
-  }
+  const [credentials, setCredentials] = useState<ILogin>({
+    email: "",
+    password: "",
+  });
+
+  const loginMutation = useLogin();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginMutation.mutate(credentials);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setCredentials((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   return (
     <div>
       <h1>Welcome to the Login Page</h1>
-      <button onClick={() => handleLogin()}>Login</button>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="email">Email:</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={credentials.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={credentials.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button type="submit" disabled={loginMutation.isPending}>
+          {loginMutation.isPending ? "Logging in..." : "Login"}
+        </button>
+        {loginMutation.isError && (
+          <p style={{ color: "red" }}>Login failed. Please try again.</p>
+        )}
+      </form>
     </div>
   );
 };
