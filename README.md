@@ -44,7 +44,7 @@ A production-ready React application boilerplate with advanced data handling, op
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/react-boilerplate.git
+git clone https://github.com/zearaez/react-boilerplate.git
 
 # Navigate to the project directory
 cd react-boilerplate
@@ -509,9 +509,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 **Support**
 
-- 📧 **Email**: [your-email@example.com](mailto:your-email@example.com)
-- 🐛 **Issues**: [GitHub Issues](https://github.com/your-username/react-boilerplate/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/your-username/react-boilerplate/discussions)
+- 📧 **Email**: [san.jeeb@live.com](mailto:san.jeeb@live.com)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/zearaez/react-boilerplate/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/zearaez/react-boilerplate/discussions)
 
 ---
 
